@@ -163,6 +163,9 @@ void lcd_create_char(unsigned int8 location, unsigned int8 *charmap);
 void lcd_putc(char c);
 
 // Impresión de cadenas de texto
+// NOTA CCS C PIC16: printf(lcd_putc, "texto") SIN especificadores % no imprime nada.
+//   Siempre usa lcd_puts("texto") para strings literales o variables.
+//   printf(lcd_putc, ...) funciona SOLO cuando hay al menos un argumento con %.
 void lcd_puts(char *s);
 #define lcd_puts_const(str)       lcd_puts(str)
 #define lcd_print_str(str)        lcd_puts(str)
@@ -175,9 +178,21 @@ void lcd_print_float(float val, unsigned int8 digits);
 // Funciones con salto de línea (estilo println)
 void lcd_println(void);
 void lcd_println_str(char *s);
-#define lcd_println_const(str)    do { printf(lcd_putc, str); lcd_println(); } while(0)
+#define lcd_println_const(str)    do { lcd_puts(str); lcd_println(); } while(0)
 void lcd_println_int(signed int16 n, unsigned int8 base);
 void lcd_println_float(float val, unsigned int8 digits);
+
+// ============================================================
+// Patrón recomendado para PIC16 (evita corrupción PCLATH)
+// ============================================================
+// En PIC16, mezclar texto y números en un solo printf corrompe el texto.
+// Usa siempre este patrón:
+//
+//   lcd_puts("Label: ");          ← texto estático con lcd_puts
+//   printf(lcd_putc, "%u", n);   ← solo el número con printf
+//
+// lcd_label(str) es un alias de lcd_puts() para dejar claro el rol:
+#define lcd_label(str)   lcd_puts(str)
 
 // ============================================================
 // Macros de conveniencia estilo Arduino

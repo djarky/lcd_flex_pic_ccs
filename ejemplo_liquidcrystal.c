@@ -9,7 +9,7 @@
 // Selección de Microcontrolador (Descomenta uno)
 // ============================================================
 //#define USE_PIC16
-#define USE_PIC16
+#define USE_PIC18
 
 #ifdef USE_PIC16
    #include <16F877A.h>
